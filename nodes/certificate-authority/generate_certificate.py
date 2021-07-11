@@ -3,8 +3,9 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
 from cryptography.hazmat.primitives import serialization
+import re
 
 from os.path import exists
 
@@ -28,6 +29,16 @@ def load_key():
 private_key = load_key()
 
 
+def load_public_key(pub_key):
+    pem_public_key = pub_key.replace("-----BEGIN PUBLIC KEY-----", "")
+    pem_public_key = pem_public_key.replace("-----END PUBLIC KEY-----", "")
+    pem_public_key = re.sub("(.{64})", "\\1\n", pem_public_key, 0, re.DOTALL)
+    pem_public_key = "-----BEGIN PUBLIC KEY-----\n" + pem_public_key
+    pem_public_key = pem_public_key + "\n-----END PUBLIC KEY-----"
+
+    return load_pem_public_key(bytes(pem_public_key.encode('utf-8')), backend=default_backend())
+
+
 def generate_x509(address, pub_key):
     builder = x509.CertificateBuilder().subject_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, address),
@@ -40,7 +51,9 @@ def generate_x509(address, pub_key):
     ).not_valid_after(
         datetime.datetime.today() + (one_day * 30)).serial_number(
             x509.random_serial_number()
-    ).public_key(pub_key).add_extension(
+    ).public_key(
+        load_public_key(pub_key)
+    ).add_extension(
         x509.SubjectAlternativeName(
             [x509.DNSName(address)]
         ),
