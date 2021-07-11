@@ -16,3 +16,8 @@ class Certificate(BaseModel):
 
     def generate_certificate(self):
         return generate_x509(self.address, self.public_key)
+
+
+def create_tables():
+    with database:
+        database.create_tables([Certificate])
