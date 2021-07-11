@@ -32,6 +32,7 @@ private_key = load_key()
 def load_public_key(pub_key):
     pem_public_key = pub_key.replace("-----BEGIN PUBLIC KEY-----", "")
     pem_public_key = pem_public_key.replace("-----END PUBLIC KEY-----", "")
+    pem_public_key = pem_public_key.replace("\n", "")
     pem_public_key = re.sub("(.{64})", "\\1\n", pem_public_key, 0, re.DOTALL)
     pem_public_key = "-----BEGIN PUBLIC KEY-----\n" + pem_public_key
     pem_public_key = pem_public_key + "\n-----END PUBLIC KEY-----"
