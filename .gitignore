@@ -21,3 +21,6 @@ log/**
 !**/migrations/__init__.py
 
 .vscode/
+
+.env
+private.key
