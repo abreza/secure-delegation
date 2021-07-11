@@ -68,3 +68,13 @@ def generate_x509(address, pub_key):
     )
 
     return certificate.public_bytes(serialization.Encoding.PEM)
+
+
+def verify(public_key, certificate):
+    issuer_public_key = load_public_key(public_key)
+    cert_to_check = x509.load_pem_x509_certificate(certificate)
+    return issuer_public_key.verify(
+        cert_to_check.signature,
+        cert_to_check.tbs_certificate_bytes,
+        cert_to_check.signature_hash_algorithm,
+    )

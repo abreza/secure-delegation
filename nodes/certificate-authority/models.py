@@ -1,6 +1,6 @@
 from peewee import *
 
-from generate_certificate import generate_x509
+from x509_certificate import generate_x509
 
 from os.path import exists
 
@@ -19,6 +19,9 @@ class Certificate(BaseModel):
 
     def generate_certificate(self):
         return generate_x509(self.address, self.public_key)
+
+    def __str__(self):
+        return 'address: ' + self.address + '\t public_key: ' + self.public_key + '\n'
 
 
 def create_tables():
