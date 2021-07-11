@@ -32,13 +32,13 @@ def service_connection(key, mask, request_handler):
 
 
 def listen(request_handler, host='127.0.0.1', port=8080):
-
-    lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    lsock.bind((host, port))
-    lsock.listen()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((host, port))
+    sock.listen()
     print("listening on", (host, port))
-    lsock.setblocking(False)
-    sel.register(lsock, selectors.EVENT_READ, data=None)
+    sock.setblocking(False)
+
+    sel.register(sock, selectors.EVENT_READ, data=None)
 
     try:
         while True:
