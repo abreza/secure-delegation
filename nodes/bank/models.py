@@ -15,6 +15,10 @@ class BaseModel(Model):
 class BlockchainAccount(BaseModel):
     public_key = CharField(unique=True)
     private_key = CharField(unique=True)
+    policy_range = IntegerField()
+    policy_count = IntegerField()
+    policy_timeout = DateTimeField()
+    policy_receiver = CharField()
 
 
 class User(BaseModel):
