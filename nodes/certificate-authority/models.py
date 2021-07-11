@@ -2,7 +2,10 @@ from peewee import *
 
 from generate_certificate import generate_x509
 
-database = SqliteDatabase('db.sqlite3')
+from os.path import exists
+
+db_name = 'db.sqlite3'
+database = SqliteDatabase(db_name)
 
 
 class BaseModel(Model):
@@ -21,3 +24,7 @@ class Certificate(BaseModel):
 def create_tables():
     with database:
         database.create_tables([Certificate])
+
+
+if not exists(db_name):
+    create_tables()
