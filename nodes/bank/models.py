@@ -23,7 +23,7 @@ class BlockchainDeligation(BaseModel):
 
 class User(BaseModel):
     username = CharField(unique=True, max_length=128)
-    password = CharField(max_length=128, default=True)
+    password = CharField(max_length=128, default='pass')
     balance = IntegerField(default=1000000)
     blockchainAccount = ForeignKeyField(
         BlockchainDeligation, null=True, unique=True)
