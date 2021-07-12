@@ -23,7 +23,7 @@ class BlockchainDeligation(BaseModel):
 
 class User(BaseModel):
     username = CharField(unique=True, max_length=128)
-    password = CharField(max_length=128)
+    password = CharField(max_length=128, default=True)
     balance = IntegerField(default=1000000)
     blockchainAccount = ForeignKeyField(
         BlockchainDeligation, null=True, unique=True)
@@ -34,14 +34,12 @@ class User(BaseModel):
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
 
-    def authenticate(self, username, password):
-        try:
-            user = User.select().where(User.username == username).get()
-        except User.DoesNotExist:
-            return False
+    @staticmethod
+    def authenticate(username, password):
+        user = User.select().where(User.username == username).get()
 
         if not user.check_password(password):
-            return False
+            raise User.DoesNotExist
 
         return user
 
