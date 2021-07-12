@@ -11,13 +11,33 @@ class BaseModel(Model):
         database = database
 
 
+class Account():
+    public_key = CharField(unique=True)
+
+
 class Block(BaseModel):
-    pass
+    private_key = CharField(unique=True)
+    public_key = CharField(unique=True)
+
+
+class Transactions(BaseModel):
+    block = ForeignKeyField(Block)
+    sender = ForeignKeyField(Account)
+    receiver = ForeignKeyField(Account)
+
+
+class Deligation(BaseModel):
+    block = ForeignKeyField(Block)
+    public_key = CharField(unique=True)
+    policy_range = IntegerField()
+    policy_count = IntegerField()
+    policy_timeout = DateTimeField()
+    policy_receiver = CharField()
 
 
 def create_tables():
     with database:
-        database.create_tables([Block])
+        database.create_tables([Account, Block, Transactions, Deligation])
 
 
 if not exists(db_name):
