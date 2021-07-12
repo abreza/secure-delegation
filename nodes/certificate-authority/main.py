@@ -2,10 +2,10 @@ from x509_certificate import verify
 from models import Certificate
 import sys
 import os
-import json
 
 sys.path.append(os.path.abspath(os.path.join('../..', 'connection')))
 from tcp_socket import listen
+from request_handler import request_handler
 
 
 def verify_certificate(req):
@@ -35,21 +35,10 @@ def get_certificates():
     return res
 
 
-def request_handler(request):
-    try:
-        req = json.loads(request)
-    except:
-        return 'Error: bad request! Req should be stringified json.'
-    url = req.get('url')
-    if not url:
-        return 'Error: bad request! Req should have a url field.'
+router = {
     # example {"url": "verify", "address": "google.com", "public_key": "salam", "certificate": "1234"}
-    if req.get('url') == 'verify':
-        return verify_certificate(req)
+    'verify': verify,
+    'certificates': get_certificates
+}
 
-    if req.get('url') == 'certificates':
-        return get_certificates()
-    return 'Error: bad url!'
-
-
-listen(request_handler, '127.0.0.1', 8081)
+listen(lambda req: request_handler(req, router), '127.0.0.1', 8081)

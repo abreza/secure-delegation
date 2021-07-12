@@ -1,25 +1,22 @@
 import sys
 import os
-import json
 
 sys.path.append(os.path.abspath(os.path.join('../..', 'connection')))
 from tcp_socket import listen
+from request_handler import request_handler
 
 
-def request_handler(request):
-    try:
-        req = json.loads(request)
-    except:
-        return 'Error: bad request! Req should be stringified json.'
-    url = req.get('url')
-    if not url:
-        return 'Error: bad request! Req should have a url field.'
-
-    if req.get('url') == 'price':
-        pass
-    if req.get('url') == 'exchange':
-        pass
-    return 'Error: bad url!'
+def price():
+    pass
 
 
-listen(request_handler)
+def exchange():
+    pass
+
+
+router = {
+    'price': price,
+    'exchange': exchange
+}
+
+listen(lambda req: request_handler(req, router))
