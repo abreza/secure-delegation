@@ -14,5 +14,5 @@ def request_handler(request, router):
         return 'Error: bad url!'
 
     response = ''
-    response += router[url]()
+    response += router[url](request)
     return response
