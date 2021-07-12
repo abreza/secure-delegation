@@ -12,7 +12,7 @@ class BaseModel(Model):
         database = database
 
 
-class BlockchainAccount(BaseModel):
+class BlockchainDeligation(BaseModel):
     public_key = CharField(unique=True)
     private_key = CharField(unique=True)
     policy_range = IntegerField()
@@ -26,7 +26,7 @@ class User(BaseModel):
     password = CharField(max_length=128)
     balance = IntegerField(default=1000000)
     blockchainAccount = ForeignKeyField(
-        BlockchainAccount, null=True, unique=True)
+        BlockchainDeligation, null=True, unique=True)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -62,7 +62,7 @@ class Transaction(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([User, Transaction])
+        database.create_tables([User, Transaction, BlockchainDeligation])
 
 
 if not exists(db_name):
