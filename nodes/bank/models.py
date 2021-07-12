@@ -24,6 +24,7 @@ class BlockchainAccount(BaseModel):
 class User(BaseModel):
     username = CharField(unique=True, max_length=128)
     password = CharField(max_length=128)
+    balance = IntegerField(default=1000000)
     blockchainAccount = ForeignKeyField(
         BlockchainAccount, null=True, unique=True)
 
@@ -46,8 +47,17 @@ class User(BaseModel):
 
 
 class Transaction(BaseModel):
-    user = ForeignKeyField(User, backref='transactions')
+    sender = ForeignKeyField(User)
+    receiver = ForeignKeyField(User)
     amount = IntegerField()
+
+    def save(self, *args, **kwargs):
+        if self.sender.balance < self.amount:
+            raise Exception('There is not enough balance!')
+
+        self.sender.balance -= self.amount
+        self.receiver.balance += self.amount
+        return super(Transaction, self).save(*args, **kwargs)
 
 
 def create_tables():
