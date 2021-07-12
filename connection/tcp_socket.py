@@ -15,20 +15,27 @@ def accept_wrapper(sock):
 
 
 def service_connection(key, mask, request_handler):
-    sock = key.fileobj
-    data = key.data
-    if mask & selectors.EVENT_READ:
-        recv_data = sock.recv(1024)
-        if recv_data:
-            data.outb += request_handler(recv_data).encode('ascii')
-        else:
-            print("closing connection to", data.addr)
-            sel.unregister(sock)
-            sock.close()
-    if mask & selectors.EVENT_WRITE:
-        if data.outb:
-            sent = sock.send(data.outb)
-            data.outb = data.outb[sent:]
+    try:
+        sock = key.fileobj
+        data = key.data
+        if mask & selectors.EVENT_READ:
+            recv_data = sock.recv(1024)
+            if recv_data:
+                data.outb += request_handler(recv_data).encode('ascii')
+            else:
+                print("closing connection to", data.addr)
+                sel.unregister(sock)
+                sock.close()
+        if mask & selectors.EVENT_WRITE:
+            if data.outb:
+                sent = sock.send(data.outb)
+                data.outb = data.outb[sent:]
+    except Exception as e:
+        print("Unknown exception!")
+        print(e)
+        data.outb = 'Error'.encode('ascii')
+        sock.send(data.outb)
+        sock.close()
 
 
 def listen(request_handler, host='127.0.0.1', port=8080):
@@ -49,6 +56,7 @@ def listen(request_handler, host='127.0.0.1', port=8080):
                 else:
                     service_connection(key, mask, request_handler)
     except KeyboardInterrupt:
-        print("caught keyboard interrupt, exiting")
+        print("Caught keyboard interrupt, exiting!")
     finally:
+        sock.close()
         sel.close()
