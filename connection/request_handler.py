@@ -13,6 +13,7 @@ def request_handler(request, router):
     if url not in router:
         return 'Error: bad url!'
 
-    response = ''
-    response += router[url](request)
-    return response
+    response = router[url](req)
+    if response:
+        return response
+    return ''
