@@ -60,3 +60,14 @@ def listen(request_handler, host='127.0.0.1', port=8080):
     finally:
         sock.close()
         sel.close()
+    sock.close()
+    sel.close()
+
+
+def send_message(ip, port, message):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((ip, port))
+    sock.send(message.encode('ascii'))
+    response = sock.recv(1024)
+    sock.close()
+    return response
