@@ -19,4 +19,8 @@ router = {
     'exchange': exchange
 }
 
-listen(lambda req: request_handler(req, router))
+import configparser
+config = configparser.ConfigParser()
+config.read('../../app.cfg')
+listen(lambda req: request_handler(req, router),
+       host=config['EC']['IP'], port=int(config['EC']['Port']))

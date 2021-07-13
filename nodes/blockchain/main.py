@@ -19,4 +19,8 @@ router = {
     'concession': concession
 }
 
-listen(lambda req: request_handler(req, router))
+import configparser
+config = configparser.ConfigParser()
+config.read('../../app.cfg')
+listen(lambda req: request_handler(req, router),
+       host=config['BLACKCHAIN']['IP'], port=int(config['BLACKCHAIN']['Port']))

@@ -42,4 +42,9 @@ router = {
     'createAccount': createAccount
 }
 
-listen(lambda req: request_handler(req, router))
+import configparser
+config = configparser.ConfigParser()
+config.read('../../app.cfg')
+
+listen(lambda req: request_handler(req, router),
+       host=config['BANK']['IP'], port=int(config['BANK']['Port']))

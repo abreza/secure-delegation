@@ -41,4 +41,8 @@ router = {
     'certificates': get_certificates
 }
 
-listen(lambda req: request_handler(req, router), '127.0.0.1', 8081)
+import configparser
+config = configparser.ConfigParser()
+config.read('../../app.cfg')
+listen(lambda req: request_handler(req, router),
+       host=config['CA']['IP'], port=int(config['CA']['Port']))
